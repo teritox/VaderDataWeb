@@ -24,7 +24,7 @@ namespace VaderDataWeb.Services
         public IEnumerable<Measurement> GetValuesOfToday(string city)
         {
             var client = new HttpClient();
-            var Dal = new DAL();
+            var Dal = new DAL(_configuration);
 
             var collection = Dal.MeasurementCollection().Find(new BsonDocument()).ToList();
 
@@ -37,7 +37,7 @@ namespace VaderDataWeb.Services
         {
             List<Measurement> weatherList = new List<Measurement>();
             var client = new HttpClient();
-            var collection = new DAL();
+            var collection = new DAL(_configuration);
 
 
             foreach (var city in cities)
@@ -45,30 +45,38 @@ namespace VaderDataWeb.Services
 
                 string connectionString = _configuration.GetConnectionString("WeatherIO");
                 Task<string> getWeatherStringTask = client.GetStringAsync($"{connectionString + city}");
-                string weatherString = await getWeatherStringTask;
-                var weatherData = JsonSerializer.Deserialize<Models.WeatherData>(weatherString);
-
-                var measurement = new Models.Measurement
+                try
                 {
-                    Id = Guid.NewGuid(),
-                    City = city,
-                    Date = DateTime.Now,
-                    Values = new Models.Values
+                    string weatherString = await getWeatherStringTask;
+                    var weatherData = JsonSerializer.Deserialize<Models.WeatherData>(weatherString);
+
+                    var measurement = new Models.Measurement
                     {
-                        RelativeHumidity = weatherData.data[0].rh,
-                        Temp = weatherData.data[0].temp,
-                        WindSpeed = weatherData.data[0].wind_spd,
-                        WindDir = weatherData.data[0].wind_dir,
-                        Uv = weatherData.data[0].uv,
-                        CloudCoverage = weatherData.data[0].clouds,
-                        App_Temp = weatherData.data[0].app_temp,
-                        Description = weatherData.data[0].weather.description
-                    }
-                };
+                        Id = Guid.NewGuid(),
+                        City = city,
+                        Date = DateTime.Now,
+                        Values = new Models.Values
+                        {
+                            RelativeHumidity = weatherData.data[0].rh,
+                            Temp = weatherData.data[0].temp,
+                            WindSpeed = weatherData.data[0].wind_spd,
+                            WindDir = weatherData.data[0].wind_dir,
+                            Uv = weatherData.data[0].uv,
+                            CloudCoverage = weatherData.data[0].clouds,
+                            App_Temp = weatherData.data[0].app_temp,
+                            Description = weatherData.data[0].weather.description
+                        }
+                    };
 
-                await collection.MeasurementCollection().InsertOneAsync(measurement);
+                    await collection.MeasurementCollection().InsertOneAsync(measurement);
 
-                weatherList.Add(measurement);
+                    weatherList.Add(measurement);
+
+                }
+                catch
+                {
+
+                }
 
             }
 
@@ -79,7 +87,7 @@ namespace VaderDataWeb.Services
         public string GetSpring(string city)
         {
             var client = new HttpClient();
-            var Dal = new DAL();
+            var Dal = new DAL(_configuration);
 
             var collection = Dal.MeasurementCollection().Find(new BsonDocument()).ToList();
 
@@ -128,7 +136,7 @@ namespace VaderDataWeb.Services
         public string GetSummer(string city)
         {
             var client = new HttpClient();
-            var Dal = new DAL();
+            var Dal = new DAL(_configuration);
 
             var collection = Dal.MeasurementCollection().Find(new BsonDocument()).ToList();
 
@@ -175,5 +183,5 @@ namespace VaderDataWeb.Services
             return "Ingen datum hittades";
         }
     }
-    
+
 }

@@ -21,7 +21,7 @@
 
         @if (Model.City == null || Model.City == "all")
         {
-        <component type="typeof(Components.WeatherAllCities)" render-mode="Static" param-cities='@Model.cities' />
+            <component type="typeof(Components.WeatherAllCities)" render-mode="Static" param-cities='@Model.cities' />
         }
         else
             {

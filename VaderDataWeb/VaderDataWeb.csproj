@@ -2,9 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>f9e79d79-7499-473d-be46-9e6935e5759e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.6.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.12.3" />
   </ItemGroup>
 
