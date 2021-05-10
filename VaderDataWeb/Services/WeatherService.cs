@@ -84,10 +84,10 @@ namespace VaderDataWeb.Services
             var collection = Dal.MeasurementCollection().Find(new BsonDocument()).ToList();
 
             var springCollection = collection
-                .Where(m => m.City == city)
+                .Where(d => d.City == city)
                 .GroupBy(d => d.Date.Date)
-                .Select(g => new { Date = g.Key, Avg = g.Average(a => a.Values.Temp) })
-                .OrderBy(g => g.Date)
+                .Select(d => new { Date = d.Key, Avg = d.Average(a => a.Values.Temp) })
+                .OrderBy(d => d.Date)
                 .ToList();
 
 
@@ -133,10 +133,10 @@ namespace VaderDataWeb.Services
             var collection = Dal.MeasurementCollection().Find(new BsonDocument()).ToList();
 
             var summerCollection = collection
-                .Where(m => m.City == city)
+                .Where(d => d.City == city)
                 .GroupBy(d => d.Date.Date)
-                .Select(g => new { Date = g.Key, Avg = g.Average(a => a.Values.Temp) })
-                .OrderBy(g => g.Date)
+                .Select(d => new { Date = d.Key, Avg = d.Average(a => a.Values.Temp) })
+                .OrderBy(d => d.Date)
                 .ToList();
 
 
@@ -147,6 +147,8 @@ namespace VaderDataWeb.Services
             {
                 for (int j = 0; j < 5; j++)
                 {
+                    if (summerCollection[i].Date.Month >= 2 && summerCollection[i].Date.Day >= 15)
+                    {
                         if (Math.Round((decimal)summerCollection[i + j].Avg, 1) >= 10)
                         {
                             daysInARow++;
@@ -163,10 +165,11 @@ namespace VaderDataWeb.Services
                             return spring;
                         }
                     }
-                
-                if (daysInARow == 7)
-                {
-                    break;
+
+                    if (daysInARow == 5)
+                    {
+                        break;
+                    }
                 }
             }
             return "Ingen datum hittades";
