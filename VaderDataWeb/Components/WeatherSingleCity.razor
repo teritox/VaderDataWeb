@@ -1,0 +1,82 @@
+﻿@page "/on-init"
+@inject Services.IWeatherService WeatherData
+
+
+
+
+@if (@CityWeather != null)
+{
+
+    <h1>@CityWeather.FirstOrDefault().City</h1>
+
+    <div class="container breathingRoom">
+        <table class="table table-hover table-warning">
+            <tbody>
+                <tr>
+                    <th>   </th>
+                    <th>Temp</th>
+                    <th>Fuktighet</th>
+                    <th>Vindhastighet m/s</th>
+                    <th>Vindriktining</th>
+                    <th>Molnighet</th>
+                    <th>Upplevd temperatur</th>
+                    <th>Uv</th>
+                </tr>
+                <tr>
+                    <td class="bold">Min</td>
+                    <td>@Math.Round(CityWeather.Min(w => w.Values.Temp), 1)</td>
+                    <td>@CityWeather.Min(w => w.Values.RelativeHumidity)</td>
+                    <td>@Math.Round(CityWeather.Min(w => w.Values.WindSpeed), 1)</td>
+                    <td>@Math.Round((decimal)CityWeather.Min(w => w.Values.WindDir), 1)</td>
+                    <td>@Math.Round((decimal)CityWeather.Min(w => w.Values.CloudCoverage))</td>
+                    <td>@Math.Round(CityWeather.Min(w => w.Values.App_Temp), 1)</td>
+                    <td>@Math.Round(CityWeather.Min(w => w.Values.Uv))</td>
+                </tr>
+                <tr>
+                    <td class="bold">Max</td>
+                    <td>@Math.Round(CityWeather.Max(w => w.Values.Temp), 1)</td>
+                    <td>@CityWeather.Max(w => w.Values.RelativeHumidity)</td>
+                    <td>@Math.Round(CityWeather.Max(w => w.Values.WindSpeed), 1)</td>
+                    <td>@Math.Round((decimal)CityWeather.Max(w => w.Values.WindDir), 1)</td>
+                    <td>@Math.Round((decimal)CityWeather.Max(w => w.Values.CloudCoverage))</td>
+                    <td>@Math.Round(CityWeather.Max(w => w.Values.App_Temp), 1)</td>
+                    <td>@Math.Round(CityWeather.Max(w => w.Values.Uv))</td>
+                </tr>
+                <tr>
+                    <td class="bold">Medel</td>
+                    <td>@Math.Round(CityWeather.Average(w => w.Values.Temp), 1)</td>
+                    <td>@Math.Round(CityWeather.Average(w => w.Values.RelativeHumidity))</td>
+                    <td>@Math.Round(CityWeather.Average(w => w.Values.WindSpeed), 1)</td>
+                    <td>@Math.Round((decimal)CityWeather.Average(w => w.Values.WindDir), 1)</td>
+                    <td>@Math.Round((decimal)CityWeather.Average(w => w.Values.CloudCoverage), 1)</td>
+                    <td>@Math.Round(CityWeather.Average(w => w.Values.App_Temp), 1)</td>
+                    <td>@Math.Round(CityWeather.Average(w => w.Values.Uv), 1)</td>
+                </tr>
+
+
+            </tbody>
+        </table>
+
+        <div>Datum för meteorologisk vår: @Spring &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; Datum för meteorologisk sommar: @Summer </div>
+    </div>
+
+}
+
+@code {
+
+    [Parameter]
+    public string City { get; set; }
+
+    public IEnumerable<VaderDataWeb.Models.Measurement> CityWeather { get; set; }
+
+    public string Spring { get; set; }
+    public string Summer { get; set; }
+
+    protected override void OnInitialized()
+    {
+        CityWeather = WeatherData.GetValuesOfToday(City);
+        Spring = WeatherData.GetSpring(City);
+        Summer = WeatherData.GetSummer(City);
+    }
+
+}

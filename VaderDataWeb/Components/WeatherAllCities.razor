@@ -1,0 +1,56 @@
+﻿@page "/on-init"
+@inject Services.IWeatherService WeatherData
+
+
+@if (WeatherList != null)
+{
+    {
+        <div class="container breathingRoom">
+            <h1>Just nu</h1>
+            <table class="table table-hover table-warning">
+                <tr>
+                    <th>Stad</th>
+                    <th>Temp</th>
+                    <th>Fuktighet</th>
+                    <th>Vindhastighet m/s</th>
+                    <th>Vindriktining</th>
+                    <th>Molnighet</th>
+                    <th>Upplevd temperatur</th>
+                    <th>Uv</th>
+                    <th>Beskrivning</th>
+                </tr>
+                <tbody>
+                    @foreach (var measurement in WeatherList)
+                    {
+                        <tr>
+                            <td class="bold">@measurement.City</td>
+                            <td>@measurement.Values.Temp</td>
+                            <td>@Math.Round(measurement.Values.RelativeHumidity, 1)</td>
+                            <td>@Math.Round(measurement.Values.WindSpeed, 1)</td>
+                            <td>@measurement.Values.WindDir</td>
+                            <td>@measurement.Values.CloudCoverage</td>
+                            <td>@measurement.Values.App_Temp</td>
+                            <td>@Math.Round(measurement.Values.Uv, 1)</td>
+                            <td>@measurement.Values.Description</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+
+@code {
+    [Parameter]
+    public string[] Cities { get; set; }
+
+    public IEnumerable<VaderDataWeb.Models.Measurement> WeatherList { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        WeatherList = await WeatherData.GetCurrentWeatherAllAsync(Cities);
+        StateHasChanged();
+    }
+
+}

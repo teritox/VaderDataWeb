@@ -1,0 +1,31 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="row">
+    <div class="col-md-2">
+        <ul class="nav nav-pills flex-column">
+
+            <li class="nav-item" style="margin-top: 200px"><a href="?city=all" class="nav-link">Alla</a></li>
+
+            @foreach (var city in Model.cities)
+            {
+                <li class="nav-item"><a href="?city=@city" class="nav-link">@city</a></li>
+            }
+        </ul>
+    </div>
+    <div class="col-md-10 text-center breathingRoom">
+        <h1 class="display-4">VäderData #</h1>
+
+        @if (Model.City == null || Model.City == "all")
+        {
+        <component type="typeof(Components.WeatherAllCities)" render-mode="Static" param-cities='@Model.cities' />
+        }
+        else
+            {
+                <component type="typeof(Components.WeatherSingleCity)" render-mode="Static" param-city='@Model.City' /> 
+            }
+    </div>
+</div>
